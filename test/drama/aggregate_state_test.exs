@@ -32,7 +32,7 @@ defmodule Drama.AggregateStateTest do
 
   @aggregate_id UUID.generate()
 
-  describe "get/1" do
+  describe "get/2" do
     test "returns the aggregate initial state when no event happened yet" do
       assert %{aggregate_id: nil, total: 0} = CounterState.get(UUID.generate())
     end
