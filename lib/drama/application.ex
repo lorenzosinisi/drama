@@ -36,11 +36,11 @@ defmodule Drama.Application do
 
   @spec event_store_config :: keyword
   defp event_store_config do
-    Application.get_env(:incident, :event_store)
+    Application.get_env(:drama, :event_store)
   end
 
   @spec projection_store_config :: keyword
   defp projection_store_config do
-    Application.get_env(:incident, :projection_store)
+    Application.get_env(:drama, :projection_store)
   end
 end

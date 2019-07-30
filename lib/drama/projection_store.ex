@@ -19,6 +19,6 @@ defmodule Drama.ProjectionStore do
   # TODO fail is this does not exists
   @spec adapter :: module
   defp adapter do
-    Application.get_env(:incident, :projection_store)[:adapter]
+    Application.get_env(:drama, :projection_store)[:adapter]
   end
 end
