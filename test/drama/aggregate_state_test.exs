@@ -23,7 +23,10 @@ defmodule Drama.AggregateStateTest do
   end
 
   defmodule CounterState do
-    use Drama.AggregateState, aggregate: Counter, initial_state: %{aggregate_id: nil, total: 0}
+    use Drama.AggregateState,
+      aggregate: Counter,
+      initial_state: %{aggregate_id: nil, total: 0},
+      start_from: :current
   end
 
   defmodule CounterAdded do
