@@ -18,9 +18,9 @@ defmodule Drama.EventStore.InMemoryAdapter do
 
   @impl true
   def get(aggregate_id, opts \\ []) do
-    __MODULE__
-    |> Agent.get(& &1)
-    |> Enum.filter(&(&1.aggregate_id == aggregate_id))
+    state = __MODULE__ |> Agent.get(& &1)
+
+    Enum.filter(state, &(&1.aggregate_id == aggregate_id))
     |> Enum.filter(&start_from(&1, opts))
     |> Enum.reverse()
   end
@@ -53,8 +53,9 @@ defmodule Drama.EventStore.InMemoryAdapter do
     aggregate_id
     |> get()
     |> Enum.map(fn persisted_event ->
-      if persisted_event.id == event.id,
-        do: %{persisted_event | acknowledged_at: DateTime.utc_now()}
+      if persisted_event.event_id == event.event_id,
+        do: %{persisted_event | acknowledged_at: DateTime.utc_now()},
+        else: persisted_event
     end)
   end
 
@@ -62,8 +63,11 @@ defmodule Drama.EventStore.InMemoryAdapter do
     event
   end
 
-  # TODO implement the start from 
-  defp start_from(event, start_from: _start_from) do
-    event
+  defp start_from(event, start_from: nil) do
+    start_from(event, start_from: :current)
+  end
+
+  defp start_from(event, start_from: :current) do
+    if is_nil(event.acknowledged_at), do: event, else: false
   end
 end

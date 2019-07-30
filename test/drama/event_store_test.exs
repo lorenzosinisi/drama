@@ -33,7 +33,7 @@ defmodule Drama.EventStoreTest do
     end
   end
 
-  describe "get/1" do
+  describe "get/2" do
     test "returns a list of events for an aggregate id in order" do
       event_added = %CounterAdded{aggregate_id: @aggregate_id, amount: 3, version: 1}
       event_removed = %CounterRemoved{aggregate_id: @aggregate_id, amount: 1, version: 2}
@@ -42,6 +42,18 @@ defmodule Drama.EventStoreTest do
 
       assert [%PersistedEvent{version: 1}, %PersistedEvent{version: 2}] =
                EventStore.get(@aggregate_id)
+    end
+
+    test "returns a list of events for an aggregate id in order, starting from the last unacknoledged event" do
+      opts = [start_from: :current]
+      aggregate_id = UUID.generate()
+      event_added = %CounterAdded{aggregate_id: aggregate_id, amount: 3, version: 1}
+      event_removed = %CounterRemoved{aggregate_id: aggregate_id, amount: 1, version: 2}
+      {:ok, persisted_event} = EventStore.append(event_added)
+      EventStore.append(event_removed)
+      EventStore.acknowledge(persisted_event)
+
+      assert [%PersistedEvent{version: 2}] = EventStore.get(aggregate_id, opts)
     end
 
     test "returns an empty list when no events are found" do

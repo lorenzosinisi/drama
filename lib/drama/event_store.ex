@@ -16,6 +16,11 @@ defmodule Drama.EventStore do
     apply(adapter(), :append, [event])
   end
 
+  @doc false
+  def acknowledge(event) do
+    apply(adapter(), :acknowledge, [event])
+  end
+
   # TODO fail is this does not exists
   @spec adapter :: module
   defp adapter do
