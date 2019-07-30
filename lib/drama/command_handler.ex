@@ -5,10 +5,8 @@ defmodule Drama.CommandHandler do
   - executes the command using the aggregate;
   """
 
-  # TODO avoid macro!
   defmacro __using__(opts) do
     aggregate = Keyword.get(opts, :aggregate)
-    # TODO event_handlers!|| Multiple, ordered list which is cool
     event_handlers = Keyword.get(opts, :event_handlers)
 
     quote do
@@ -37,9 +35,8 @@ defmodule Drama.CommandHandler do
         with true <- command_module.valid?(command),
              {:ok, new_event, state} <- unquote(aggregate).execute(command),
              {:ok, persisted_event} <- EventStore.append(new_event),
-             :ok <- do_handle(unquote(event_handlers), persisted_event, state) do
-          # TODO Acknoledge events
-          # TODO Read only not ack events
+             :ok <- do_handle(unquote(event_handlers), persisted_event, state),
+             {:ok, persisted_event} <- EventStore.acknowledge(persisted_event) do
           # TODO Use a genserve to understand what to recover
           # TODO add snapshotting
 
