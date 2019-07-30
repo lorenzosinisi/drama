@@ -16,7 +16,6 @@ defmodule Drama.Event.PersistedEventTest do
   describe "changeset/2" do
     test "returns a valid changeset when all fields are valid" do
       changeset = PersistedEvent.changeset(%PersistedEvent{}, @valid_params)
-
       assert changeset.valid?
     end
 

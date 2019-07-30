@@ -9,7 +9,7 @@ defmodule Drama.CommandHandler do
   defmacro __using__(opts) do
     aggregate = Keyword.get(opts, :aggregate)
     # TODO event_handlers!|| Multiple, ordered list which is cool
-    event_handler = Keyword.get(opts, :event_handler)
+    event_handlers = Keyword.get(opts, :event_handlers)
 
     quote do
       # TODO this name is shit
@@ -37,7 +37,7 @@ defmodule Drama.CommandHandler do
         with true <- command_module.valid?(command),
              {:ok, new_event, state} <- unquote(aggregate).execute(command),
              {:ok, persisted_event} <- EventStore.append(new_event),
-             :ok <- unquote(event_handler).listen(persisted_event, state) do
+             :ok <- do_handle(unquote(event_handlers), persisted_event, state) do
           # TODO Acknoledge events
           # TODO Read only not ack events
           # TODO Use a genserve to understand what to recover
@@ -48,6 +48,13 @@ defmodule Drama.CommandHandler do
           false -> {:error, :invalid_command}
           {:error, _reason} = error -> error
         end
+      end
+
+      defp do_handle(handlers, persisted_event, state) do
+        Enum.map(handlers, fn handler -> handler.handle(persisted_event, state) end)
+        |> Enum.uniq()
+        |> Enum.all?(&(&1 == :ok))
+        |> Kernel.and(:ok)
       end
     end
   end

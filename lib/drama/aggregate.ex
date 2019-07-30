@@ -1,6 +1,7 @@
 defmodule Drama.Aggregate do
   @moduledoc """
-  An aggregate is the unit of business logic in the domain. The business logic is used to handle commands and also to apply events to change the aggregate state.
+  An aggregate is the unit of business logic in the domain.
+  The business logic is used to handle commands and also to apply events to change the aggregate state.
 
   This behaviour defines the callbacks for command execution and event application.
   """
@@ -13,7 +14,7 @@ defmodule Drama.Aggregate do
   In case of an unsuccessful command and logic, an error is returned containing a business logic reason.
 
   """
-  @callback execute(struct) :: {:ok, struct, map} | {:error, atom}
+  @callback execute(struct) :: {:ok, struct, map} | {:error, any()}
 
   @doc """
   Receives a persisted event and the aggregate state, performing an aggregate state update.

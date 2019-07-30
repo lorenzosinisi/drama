@@ -11,7 +11,8 @@ defmodule Drama.Event.PersistedEvent do
           event_type: String.t() | nil,
           version: pos_integer | nil,
           event_date: DateTime.t() | nil,
-          event_data: map | nil
+          event_data: map | nil,
+          acknowledged_at: DateTime.t() | nil
         }
 
   use Ecto.Schema
@@ -25,15 +26,33 @@ defmodule Drama.Event.PersistedEvent do
     field(:version, :integer)
     field(:event_date, :utc_datetime)
     field(:event_data, :map)
+    field(:acknowledged_at, :utc_datetime)
   end
 
-  @required_fields ~w(event_id aggregate_id event_type version event_date event_data)a
+  @allowed_fileds ~w(
+    event_id
+    aggregate_id
+    event_type
+    version
+    event_date
+    event_data
+    acknowledged_at
+  )a
+
+  @required_fields ~w(
+    event_id
+    aggregate_id
+    event_type
+    version
+    event_date
+    event_data
+  )a
 
   @doc false
   @spec changeset(t, map) :: Ecto.Changeset.t()
   def changeset(record, params \\ %{}) do
     record
-    |> cast(params, @required_fields)
+    |> cast(params, @allowed_fileds)
     |> validate_required(@required_fields)
   end
 end

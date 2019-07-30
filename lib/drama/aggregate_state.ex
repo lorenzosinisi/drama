@@ -6,6 +6,7 @@ defmodule Drama.AggregateState do
   defmacro __using__(opts) do
     aggregate = Keyword.get(opts, :aggregate)
     initial_state = Keyword.get(opts, :initial_state)
+    start_from = Keyword.get(opts, :start_from)
 
     quote do
       import Drama.AggregateState
@@ -18,7 +19,7 @@ defmodule Drama.AggregateState do
       @spec get(String.t()) :: any
       def get(aggregate_id) do
         aggregate_id
-        |> EventStore.get()
+        |> EventStore.get(start_from: unquote(start_from))
         |> Enum.reduce(unquote(initial_state), fn event, state ->
           unquote(aggregate).apply(event, state)
         end)

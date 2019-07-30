@@ -14,4 +14,5 @@ defmodule Drama.EventStore.Adapter do
   Appends an event to the Event Store.
   """
   @callback append(map) :: {:ok, PersistedEvent.t()}
+  @callback acknowledge(map) :: {:ok, PersistedEvent.t()}
 end

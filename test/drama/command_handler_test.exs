@@ -44,13 +44,13 @@ defmodule Drama.CommandHandlerTest do
     @behaviour Drama.EventHandler
 
     @impl true
-    def listen(_, _) do
+    def handle(_, _) do
       :ok
     end
   end
 
   defmodule CounterCommandHandler do
-    use Drama.CommandHandler, aggregate: Counter, event_handler: CounterEventHandler
+    use Drama.CommandHandler, aggregate: Counter, event_handlers: [CounterEventHandler]
   end
 
   @aggregate_id UUID.generate()

@@ -6,8 +6,8 @@ defmodule Drama.EventStore do
   """
   # TODO bad naming, change
   @doc false
-  def get(aggregate_id) do
-    apply(adapter(), :get, [aggregate_id])
+  def get(aggregate_id, opts \\ []) do
+    apply(adapter(), :get, [aggregate_id, opts])
   end
 
   # TODO check this naming, append what where? 
